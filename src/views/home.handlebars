@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cocktail Finder</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        .ingredient { color: green; }
+        .cocktail { color: blue; }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Cocktail Finder</h1>
+        <form method="get" action="/">
+            <div class="input-group mb-3">
+                <input type="text" id="search-input" class="form-control" placeholder="Cerca cocktail o ingrediente" name="name">
+                <button class="btn btn-primary" type="submit">Cerca</button>
+            </div>
+        </form>
+        <div id="suggestions" class="list-group"></div>
+        <div class="row mt-3">
+            {{#each cocktails}}
+            <div class="col-md-3 mb-4">
+                <div class="card" data-id="{{this.idDrink}}" data-name="{{this.strDrink}}">
+                    <img src="{{this.strDrinkThumb}}" class="card-img-top" alt="{{this.strDrink}}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{this.strDrink}}</h5>
+                        <p class="card-text">{{this.strCategory}} - {{this.strGlass}}</p>
+                    </div>
+                </div>
+            </div>
+            {{/each}}
+        </div>
+    </div>
+
+    <div class="modal fade" id="ingredientsModal" tabindex="-1" aria-labelledby="ingredientsModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ingredientsModalLabel">Ingredienti del Cocktail</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul id="ingredients-list" class="list-group">
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $('#search-input').on('input', function() {
+                const query = $(this).val();
+                if (query.length >= 2) { 
+                    $.get(`/search-suggestions?q=${query}`, function(data) {
+                        let suggestions = '';
+                        data.ingredients.forEach(ingredient => {
+                            suggestions += `<a href="#" class="list-group-item list-group-item-action ingredient">${ingredient}</a>`;
+                        });
+                        data.cocktails.forEach(cocktail => {
+                            suggestions += `<a href="#" class="list-group-item list-group-item-action cocktail">${cocktail}</a>`;
+                        });
+                        $('#suggestions').html(suggestions);
+                    });
+                } else {
+                    $('#suggestions').empty();
+                }
+            });
+            $('#suggestions').on('click', '.list-group-item', function(event) {
+                const selectedValue = $(this).text();
+                $('#search-input').val(selectedValue);
+                $('#search-form').submit();
+            });
+            $('.card').on('click', function() {
+                const cocktailId = $(this).data('id');
+                const cocktailName = $(this).data('name');
+                $.get(`/cocktail-details/${cocktailId}`, function(data) {
+                    const ingredientsList = data.ingredients;
+                    let ingredientsHtml = '';
+                    ingredientsList.forEach(item => {
+                        ingredientsHtml += `<li class="list-group-item">${item.name}: ${item.quantity}</li>`;
+                    });
+
+                    $('#ingredients-list').html(ingredientsHtml);
+                    $('#ingredientsModalLabel').text(cocktailName);
+                    $('#ingredientsModal').modal('show');
+                });
+            });
+        });
+
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
