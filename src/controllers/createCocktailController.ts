@@ -14,12 +14,7 @@ export const createCocktailHandler = async (req: Request, res: Response): Promis
     try {
         await createCocktail(title, image, ingredients);
         
-        const cocktails = await getCocktails();
-
-        res.render('my-cocktails', { 
-            cocktails, 
-            title: 'Lista dei Cocktail' 
-        });
+        res.redirect('/cocktails');
     } catch (error) {
         console.error('Errore nella creazione del cocktail:', error);
         res.status(500).json({ success: false, message: 'Errore interno' });
@@ -59,12 +54,8 @@ export const updateCocktailHandler = async (req: Request, res: Response): Promis
     try {
         await updateCocktail(req.params.id, updatedData);
 
-        const cocktails = await getCocktails();
+        res.status(200).json({ success: true, message: 'Cocktail modificato con successo' });
 
-        res.render('my-cocktails', { 
-            cocktails, 
-            title: 'Lista dei Cocktail' 
-        });
     } catch (error) {
         console.error('Errore nell\'aggiornamento del cocktail:', error);
         res.status(500).json({ success: false, message: 'Errore interno' });
@@ -75,12 +66,8 @@ export const deleteCocktailHandler = async (req: Request, res: Response): Promis
     try {
         await deleteCocktail(req.params.id);
 
-        const cocktails = await getCocktails();
-
-        res.render('my-cocktails', { 
-            cocktails, 
-            title: 'Lista dei Cocktail' 
-        });
+        // return 200
+        res.status(200).json({ success: true, message: 'Cocktail eliminato con successo' });
     } catch (error) {
         console.error('Errore nell\'eliminazione del cocktail:', error);
         res.status(500).json({ success: false, message: 'Errore interno' });

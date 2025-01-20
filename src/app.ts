@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import { engine } from 'express-handlebars'; 
 import path from 'path';
 import cocktailRoutes from './routes/cocktailRoutes';
+import { closeDbConnection, connectToDb } from './config/db';
 
 dotenv.config();
 
@@ -22,6 +23,14 @@ app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
 app.use('/', cocktailRoutes);
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+
+connectToDb().then(() => {
+  app.listen(PORT, () => {
+      console.log(`Server avviato su http://localhost:${PORT}`);
+  });
+});
+
+process.on('SIGINT', async () => {
+  await closeDbConnection();
+  process.exit(0);
 });

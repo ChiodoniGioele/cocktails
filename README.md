@@ -1,11 +1,15 @@
 # Cocktails explorer
 
-## .env
+### .env
 
-PORT=3000
+> PORT=3000
+> 
+> API_KEY=1
+> 
+> COCKTAILS_API_URL=https://www.thecocktaildb.com/api/json/v1/1
+> 
+> DB_CON=mongodb://admin:password@localhost:27017/cocktails_db?authSource=admin
 
-API_KEY=1
+### run dev
 
-COCKTAILS_API_URL=https://www.thecocktaildb.com/api/json/v1/1
-
-DB_CON=mongodb://admin:password@localhost:27017/cocktails_db?authSource=admin
+use ´npm run dev´
