@@ -12,4 +12,6 @@
 
 ### run dev
 
-use ´npm run dev´
+use **npm run dev**
+
+create a **uploads** folder for images
