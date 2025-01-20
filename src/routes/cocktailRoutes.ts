@@ -2,10 +2,12 @@ import { Router } from 'express';
 import multer from 'multer';
 import * as cocktailController from '../controllers/cocktailController';
 import * as createCocktailController from '../controllers/createCocktailController';
+import dotenv from 'dotenv';
 
 const router = Router();
+dotenv.config();
 
-const upload = multer({ dest: 'uploads/' });
+const IMAGEFOLDER = multer({ dest: process.env.IMAGE_FOLDER ||"uploads" });
 
 router.get('/', cocktailController.searchCocktail);
 router.get('/search-suggestions', cocktailController.searchSuggestions);
@@ -13,7 +15,7 @@ router.get('/cocktail-details/:id', cocktailController.getCocktailDetails);
 
 router.post(
     '/create-cocktail',
-    upload.single('image'),
+    IMAGEFOLDER.single('image'),
     createCocktailController.createCocktailHandler
 );
 

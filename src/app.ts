@@ -18,7 +18,8 @@ app.engine('handlebars', engine({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
+const IMAGEFOLDER = process.env.IMAGE_FOLDER ||"uploads";
+app.use(`/${IMAGEFOLDER}`, express.static(path.join(__dirname, '..', `${IMAGEFOLDER}`)));
 
 app.use('/', cocktailRoutes);
 
